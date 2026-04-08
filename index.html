@@ -1,169 +1,53 @@
-<div id="ac-size-widget" style="max-width:640px;margin:20px auto;padding:24px;background:#eff4f9;border:1px solid #d7e2ec;border-radius:24px;box-shadow:0 10px 30px rgba(35,76,119,0.08);font-family:'Microsoft JhengHei',sans-serif;color:#234c77;box-sizing:border-box;">
-  <div style="text-align:center;margin-bottom:14px;">
-    <span style="display:inline-block;padding:8px 16px;border:1px solid #cad7e2;border-radius:999px;background:rgba(255,255,255,0.7);font-size:13px;font-weight:700;color:#617c98;">
-      AI 智慧尺寸推薦
-    </span>
-  </div>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>尺寸計算</title>
+</head>
 
-  <h2 style="margin:0;text-align:center;font-size:24px;line-height:1.35;font-weight:900;color:#234c77;">
-    不確定要買哪個尺寸？
-  </h2>
+<body style="margin:0;font-family:Microsoft JhengHei;background:#ffffff;">
 
-  <p style="margin:14px 0 22px;text-align:center;font-size:14px;line-height:1.8;color:#6d7f92;">
-    輸入身高、體重與穿著偏好，快速取得建議尺寸
-  </p>
+<div style="max-width:420px;margin:auto;padding:16px;">
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;" id="ac-size-grid">
-    <div>
-      <div style="margin-bottom:8px;font-size:14px;font-weight:800;color:#2a4e74;">身高 (cm)</div>
-      <input id="ac-height" type="number" placeholder="例如 178" style="width:100%;height:50px;padding:0 14px;border:1px solid #c8d5e1;border-radius:12px;background:#fff;font-size:16px;color:#2f4358;box-sizing:border-box;">
-    </div>
+  <!-- 身高 -->
+  <input id="h" type="number" placeholder="身高 cm"
+  style="width:100%;padding:12px;margin-bottom:10px;border:1px solid #ddd;border-radius:8px;">
 
-    <div>
-      <div style="margin-bottom:8px;font-size:14px;font-weight:800;color:#2a4e74;">體重 (kg)</div>
-      <input id="ac-weight" type="number" placeholder="例如 78" style="width:100%;height:50px;padding:0 14px;border:1px solid #c8d5e1;border-radius:12px;background:#fff;font-size:16px;color:#2f4358;box-sizing:border-box;">
-    </div>
+  <!-- 體重 -->
+  <input id="w" type="number" placeholder="體重 kg"
+  style="width:100%;padding:12px;margin-bottom:10px;border:1px solid #ddd;border-radius:8px;">
 
-    <div>
-      <div style="margin-bottom:8px;font-size:14px;font-weight:800;color:#2a4e74;">平常穿著尺寸</div>
-      <select id="ac-usual-size" style="width:100%;height:50px;padding:0 14px;border:1px solid #c8d5e1;border-radius:12px;background:#fff;font-size:16px;color:#2f4358;box-sizing:border-box;">
-        <option value="XS">XS</option>
-        <option value="S">S</option>
-        <option value="M">M</option>
-        <option value="L" selected>L</option>
-        <option value="XL">XL</option>
-        <option value="2XL">2XL</option>
-        <option value="3XL">3XL</option>
-      </select>
-    </div>
-
-    <div>
-      <div style="margin-bottom:8px;font-size:14px;font-weight:800;color:#2a4e74;">版型偏好</div>
-      <select id="ac-fit" style="width:100%;height:50px;padding:0 14px;border:1px solid #c8d5e1;border-radius:12px;background:#fff;font-size:16px;color:#2f4358;box-sizing:border-box;">
-        <option value="合身">合身</option>
-        <option value="寬鬆" selected>寬鬆</option>
-        <option value="非常寬鬆">非常寬鬆</option>
-      </select>
-    </div>
-  </div>
-
-  <button id="ac-size-btn" type="button" style="width:100%;margin-top:16px;height:54px;border:0;border-radius:14px;background:linear-gradient(90deg,#235888,#3c82c6);color:#fff;font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 12px 22px rgba(35,88,136,0.22);">
-    立即開始 AI 找尺寸
+  <!-- 按鈕 -->
+  <button onclick="calc()"
+  style="width:100%;padding:12px;background:#444;color:#fff;border:none;border-radius:8px;">
+  查看尺寸
   </button>
 
-  <div style="margin-top:16px;border:1px solid #d7e2ec;background:rgba(255,255,255,0.8);border-radius:16px;padding:18px 16px;">
-    <div style="font-size:13px;color:#6d7f92;margin-bottom:8px;">AI 推薦結果</div>
-    <div id="ac-size-result" style="font-size:24px;font-weight:900;color:#234c77;margin-bottom:10px;">建議尺寸：XL</div>
-    <div id="ac-size-desc" style="font-size:14px;line-height:1.8;color:#5d7287;">
-      系統會依照您的身形條件與穿著偏好提供初步建議，實際仍建議搭配商品尺寸表一起確認。
-    </div>
-  </div>
+  <!-- 結果 -->
+  <div id="result" style="margin-top:12px;font-weight:bold;text-align:center;"></div>
 
-  <div style="margin-top:14px;text-align:center;font-size:12px;line-height:1.7;color:#8897a8;">
-    ※ 此結果為選購參考，若商品版型偏大或偏小，請再對照商品頁尺寸表。
-  </div>
 </div>
 
 <script>
-(function () {
-  var sizeOrder = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
+function calc(){
+  var h = document.getElementById("h").value;
+  var w = document.getElementById("w").value;
 
-  function shiftSize(size, step) {
-    var index = sizeOrder.indexOf(size);
-    if (index === -1) return size;
-    var nextIndex = Math.max(0, Math.min(sizeOrder.length - 1, index + step));
-    return sizeOrder[nextIndex];
+  if(!h || !w){
+    alert("請輸入身高體重");
+    return;
   }
 
-  function getBaseSizeByWeight(weight) {
-    if (weight < 50) return "S";
-    if (weight < 60) return "M";
-    if (weight < 70) return "L";
-    if (weight < 82) return "XL";
-    if (weight < 95) return "2XL";
-    return "3XL";
-  }
+  var size = "M";
 
-  function recommendSize(height, weight, usualSize, fitPreference) {
-    var size = getBaseSizeByWeight(weight);
+  if(w > 60) size = "L";
+  if(w > 75) size = "XL";
+  if(w > 90) size = "2XL";
 
-    if (height >= 182 && weight <= 75) size = shiftSize(size, 1);
-    if (height <= 168 && weight >= 72) size = shiftSize(size, 1);
-
-    var usualIndex = sizeOrder.indexOf(usualSize);
-    var autoIndex = sizeOrder.indexOf(size);
-    if (usualIndex !== -1 && Math.abs(usualIndex - autoIndex) <= 1) {
-      size = usualSize;
-    }
-
-    if (fitPreference === "寬鬆") size = shiftSize(size, 1);
-    if (fitPreference === "非常寬鬆") size = shiftSize(size, 2);
-
-    return size;
-  }
-
-  function getDesc(size, fitPreference) {
-    var text = "系統已依照您的身高、體重、平常尺寸與版型偏好完成初步推薦。";
-
-    if (fitPreference === "合身") {
-      text += " 這次推薦偏向俐落合身感，若商品本身版型偏小，可考慮再加一碼。";
-    } else if (fitPreference === "寬鬆") {
-      text += " 這次推薦偏向自然寬鬆感，日常穿著通常會比較舒服。";
-    } else {
-      text += " 這次推薦偏向更寬鬆的穿感，若布料偏厚或版型本身偏大，建議再對照尺寸表確認。";
-    }
-
-    if (size === "2XL" || size === "3XL") {
-      text += " 若您介意衣長或肩寬偏大，建議再比對實際數據。";
-    }
-
-    return text;
-  }
-
-  function handleRecommend() {
-    var height = Number(document.getElementById("ac-height").value);
-    var weight = Number(document.getElementById("ac-weight").value);
-    var usualSize = document.getElementById("ac-usual-size").value;
-    var fitPreference = document.getElementById("ac-fit").value;
-    var result = document.getElementById("ac-size-result");
-    var desc = document.getElementById("ac-size-desc");
-
-    if (!height || !weight) {
-      alert("請先輸入身高與體重");
-      return;
-    }
-
-    if (height < 140 || height > 220) {
-      alert("身高請輸入 140 到 220 cm");
-      return;
-    }
-
-    if (weight < 35 || weight > 180) {
-      alert("體重請輸入 35 到 180 kg");
-      return;
-    }
-
-    var size = recommendSize(height, weight, usualSize, fitPreference);
-    result.innerHTML = "建議尺寸：" + size;
-    desc.innerHTML = getDesc(size, fitPreference);
-  }
-
-  var btn = document.getElementById("ac-size-btn");
-  if (btn) {
-    btn.addEventListener("click", handleRecommend);
-  }
-
-  function setMobileLayout() {
-    var grid = document.getElementById("ac-size-grid");
-    if (!grid) return;
-    if (window.innerWidth <= 640) {
-      grid.style.gridTemplateColumns = "1fr";
-    } else {
-      grid.style.gridTemplateColumns = "1fr 1fr";
-    }
-  }
-
-  setMobileLayout();
-  window.addEventListener("resize", setMobileLayout);
-})();
+  document.getElementById("result").innerHTML = "建議尺寸：" + size;
+}
 </script>
+
+</body>
+</html>
