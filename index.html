@@ -8,34 +8,60 @@
 
 <body style="margin:0;font-family:Microsoft JhengHei;background:#ffffff;">
 
-<div style="max-width:420px;margin:auto;padding:16px;">
+<div style="max-width:520px;margin:auto;padding:14px;box-sizing:border-box;">
 
-  <!-- 身高 -->
-  <input id="h" type="number" placeholder="身高 cm"
-  style="width:100%;padding:12px;margin-bottom:10px;border:1px solid #ddd;border-radius:8px;">
+  <div style="text-align:center;font-size:18px;font-weight:bold;color:#1f2937;margin-bottom:14px;">
+    尺寸計算
+  </div>
 
-  <!-- 體重 -->
-  <input id="w" type="number" placeholder="體重 kg"
-  style="width:100%;padding:12px;margin-bottom:10px;border:1px solid #ddd;border-radius:8px;">
+  <div id="wrap" style="display:flex;gap:10px;align-items:flex-start;">
 
-  <!-- 按鈕 -->
-  <button onclick="calc()"
-  style="width:100%;padding:12px;background:#444;color:#fff;border:none;border-radius:8px;">
-  查看尺寸
-  </button>
+    <!-- 左邊輸入 -->
+    <div id="leftBox" style="flex:1;min-width:0;">
 
-  <!-- 結果 -->
-  <div id="result" style="margin-top:12px;font-weight:bold;text-align:center;"></div>
+      <input id="h" type="number" placeholder="身高 cm"
+      style="width:100%;height:42px;padding:0 12px;margin-bottom:8px;border:1px solid #d1d5db;border-radius:10px;font-size:15px;box-sizing:border-box;">
+
+      <input id="w" type="number" placeholder="體重 kg"
+      style="width:100%;height:42px;padding:0 12px;margin-bottom:8px;border:1px solid #d1d5db;border-radius:10px;font-size:15px;box-sizing:border-box;">
+
+      <select id="fit"
+      style="width:100%;height:42px;padding:0 12px;margin-bottom:8px;border:1px solid #d1d5db;border-radius:10px;font-size:15px;box-sizing:border-box;background:#fff;">
+        <option value="">穿著偏好</option>
+        <option value="合身">喜歡合身</option>
+        <option value="寬鬆">喜歡寬鬆</option>
+      </select>
+
+      <button onclick="calc()"
+      style="width:100%;height:42px;background:#4b5563;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:bold;">
+        查看尺寸
+      </button>
+
+    </div>
+
+    <!-- 右邊結果 -->
+    <div id="rightBox" style="width:150px;flex-shrink:0;background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:12px;box-sizing:border-box;">
+      <div style="font-size:12px;color:#6b7280;margin-bottom:6px;">建議結果</div>
+      <div id="result" style="font-size:22px;font-weight:bold;color:#111827;margin-bottom:6px;">--</div>
+      <div id="desc" style="font-size:13px;line-height:1.5;color:#6b7280;">
+        輸入資料後顯示
+      </div>
+    </div>
+
+  </div>
 
 </div>
 
 <script>
 function calc(){
-  var h = document.getElementById("h").value;
-  var w = document.getElementById("w").value;
+  var h = Number(document.getElementById("h").value);
+  var w = Number(document.getElementById("w").value);
+  var fit = document.getElementById("fit").value;
+  var result = document.getElementById("result");
+  var desc = document.getElementById("desc");
 
-  if(!h || !w){
-    alert("請輸入身高體重");
+  if(!h || !w || !fit){
+    alert("請輸入身高、體重並選擇穿著偏好");
     return;
   }
 
@@ -45,8 +71,36 @@ function calc(){
   if(w > 75) size = "XL";
   if(w > 90) size = "2XL";
 
-  document.getElementById("result").innerHTML = "建議尺寸：" + size;
+  if(fit === "寬鬆"){
+    if(size === "M") size = "L";
+    else if(size === "L") size = "XL";
+    else if(size === "XL") size = "2XL";
+  }
+
+  result.innerHTML = size;
+
+  if(fit === "合身"){
+    desc.innerHTML = "偏合身建議";
+  } else {
+    desc.innerHTML = "偏寬鬆建議";
+  }
 }
+
+function mobileLayout(){
+  var wrap = document.getElementById("wrap");
+  var rightBox = document.getElementById("rightBox");
+
+  if(window.innerWidth <= 480){
+    wrap.style.flexDirection = "column";
+    rightBox.style.width = "100%";
+  } else {
+    wrap.style.flexDirection = "row";
+    rightBox.style.width = "150px";
+  }
+}
+
+mobileLayout();
+window.addEventListener("resize", mobileLayout);
 </script>
 
 </body>
